@@ -45,8 +45,10 @@ pcaGenes$rotation[,1]
 pdf("Output/PCA_Raw.pdf")
 
 pca <- prcomp(t(allMat))#, scale. = TRUE)
-plot(pca,
-     main = "Variance plot, non-scaled PCA")
+barplot(pcaNorm$sdev^2 / sum(pcaNorm$sdev^2) * 100,
+        main = "Variance plot, scaled PCA")
+plot(cumsum(pcaNorm$sdev^2 / sum(pcaNorm$sdev^2)) * 100,
+     main = "Cumulative Variance plot, scaled PCA", ylim = c(0,100))
 plot(pca$x[, 1:2], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$type], pch = 20,
      main = "PCs plot, non-scaled PCA, per type")
 plot(pca$x[, 1:2], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$tissue], pch = 20,
@@ -78,8 +80,12 @@ pdf("Output/PCA_Norm.pdf")
 
 ## No scaling:
 pcaNorm <- prcomp(t(allNormMat))
-plot(pcaNorm,
-     main = "Variance plot, non-scaled PCA")
+barplot(pcaNorm$sdev^2 / sum(pcaNorm$sdev^2) * 100,
+        main = "Variance plot, scaled PCA")
+plot(cumsum(pcaNorm$sdev^2 / sum(pcaNorm$sdev^2)) * 100,
+     main = "Cumulative Variance plot, scaled PCA", ylim = c(0,100))
+plot(pcaNorm$x[, 1:2], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$type], pch = 20,
+     main = "PCs plot, non-scaled PCA, per sample")
 plot(pcaNorm$x[, 1:2], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$type], pch = 20,
      main = "PCs plot, non-scaled PCA, per type")
 plot(pcaNorm$x[, 1:2], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$tissue], pch = 20,
@@ -107,20 +113,30 @@ hist(allNormMat[pcaNorm$rotation[,3] < -0.2, ], 100,
 
 ## PCA with scaling each gene separately:
 pcaNorm <- prcomp(t(allNormMat), scale. = TRUE)
-plot(pcaNorm,
-     main = "Variance plot, scaled PCA")
+barplot(pcaNorm$sdev^2 / sum(pcaNorm$sdev^2) * 100,
+        main = "Variance plot, scaled PCA")
+plot(cumsum(pcaNorm$sdev^2 / sum(pcaNorm$sdev^2)) * 100,
+     main = "Cumulative Variance plot, scaled PCA", ylim = c(0,100))
 plot(pcaNorm$x[, 1:2], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$type], pch = 20,
      main = "PCs plot, scaled PCA, per type")
 plot(pcaNorm$x[, 1:2], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$tissue], pch = 20,
+     main = "PCs plot, scaled PCA, per tissue")
+text(pcaNorm$x[, 1:2], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$tissue], label = as.character(1:40),
      main = "PCs plot, scaled PCA, per tissue")
 plot(pcaNorm$rotation[,1:2], pch = 20, col = adjustcolor("black", a = 0.1),
      main = "Rotation plot (genes), scaled PCA"); abline(v = 0, col = "red"); abline(h = 0, col = "red")
 plot(pcaNorm$x[, 3:4], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$type], pch = 20,
      main = "PCs plot, scaled PCA, per type")
+text(pcaNorm$x[, 3:4], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$type], label = as.character(1:40),
+     main = "PCs plot, scaled PCA, per tissue")
 plot(pcaNorm$x[, 3:4], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$tissue], pch = 20,
      main = "PCs plot, scaled PCA, per tissue")
 plot(pcaNorm$rotation[,3:4], pch = 20, col = adjustcolor("black", a = 0.1),
      main = "Rotation plot (genes), scaled PCA"); abline(v = 0, col = "red"); abline(h = 0, col = "red")
+plot(pcaNorm$x[, 5:6], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$type], pch = 20,
+     main = "PCs plot, scaled PCA, per type")
+text(pcaNorm$x[, 5:6], col = RColorBrewer::brewer.pal(3, "Dark2")[sampsDf$type], label = as.character(1:40),
+     main = "PCs plot, scaled PCA, per tissue")
 
 # outliers:
 print(sampsDf[pcaNorm$x[,4] < -60, ])
